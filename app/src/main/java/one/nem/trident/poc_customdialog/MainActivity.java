@@ -14,14 +14,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ボタンを押したときにテストダイアログを表示する
         findViewById(R.id.button).setOnClickListener(v -> {
             showTestDialog();
         });
     }
 
+    /**
+     * テストダイアログを表示する
+     */
     private void showTestDialog() {
         TestDialog testDialog = new TestDialog();
-        testDialog.setTestData(getStubData(100));
+        testDialog.setTestData(getStubData(5));
         testDialog.setListener((position, item) -> {
             Toast.makeText(this, "Clicked: " + item + " (position: " + position + ")", Toast.LENGTH_SHORT).show();
         });
@@ -29,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
         testDialog.show(getSupportFragmentManager(), "TestDialog");
     }
 
+    /**
+     * テストデータを作成する
+     * @param size データのサイズ
+     * @return テストデータ(StringのArrayList)
+     */
     private ArrayList<String> getStubData(int size) {
         ArrayList<String> stubData = new ArrayList<>();
         for(int i = 0; i < size; i++) {

@@ -16,14 +16,17 @@ import java.util.ArrayList;
 
 public class TestDialog extends DialogFragment {
 
+    // Listener (別ファイルで定義してもok)
     public interface TestDialogListener {
         void onItemClicked(int position, String item);
     }
 
+    // Fields
     private TestDialogListener listener;
 
     private ArrayList<String> testData;
 
+    // Setters (Privateなフィールドにデータをセットするためのメソッド)
     public void setListener(TestDialogListener listener) {
         this.listener = listener;
     }
@@ -34,41 +37,53 @@ public class TestDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
-        builder.setTitle("Test Dialog");
-        builder.setMessage("This is a test dialog");
 
+        // ダイアログの作成
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
+        builder.setTitle("Test Dialog"); // タイトル
+        builder.setMessage("This is a test dialog"); // メッセージ
+
+        // ダイアログの中身の作成 --------------------------------------------------
+
+        // レイアウトファイルの読み込み
         View view = getActivity().getLayoutInflater().inflate(R.layout.layout_dialog_test, null);
 
+        // RecyclerViewの取得
         RecyclerView recyclerView = view.findViewById(R.id.test_recycler_view);
 
+        // LayoutManagerの設定
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        // Adapterの設定
         TestRecyclerViewAdapter adapter = new TestRecyclerViewAdapter();
 
-        adapter.setListener((position, item) -> {
+        adapter.setListener((position, item) -> { // リスナーの設定
             if (listener != null) {
                 listener.onItemClicked(position, item);
             }
         });
 
-        getActivity().runOnUiThread(() -> {
-            adapter.setTestData(this.testData);
-            adapter.notifyDataSetChanged();
+        getActivity().runOnUiThread(() -> { // UIスレッドで実行
+            adapter.setTestData(this.testData); // データのセット
+            adapter.notifyDataSetChanged(); // データの更新
         });
 
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter); // Adapterのセット
 
-        builder.setView(view);
+        // ----------------------------------------------------------------------
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
+        builder.setView(view); // ダイアログにViewをセット
+
+        // ボタンの設定
+        builder.setPositiveButton("OK", (dialog, which) -> { // Positive（肯定的）ボタン
             Toast.makeText(getActivity(), "OK", Toast.LENGTH_SHORT).show();
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
+        builder.setNegativeButton("Cancel", (dialog, which) -> { // Negative（否定的）ボタン
             Toast.makeText(getActivity(), "Cancel", Toast.LENGTH_SHORT).show();
         });
 
+        // ダイアログの作成/返却
         return builder.create();
     }
 }
